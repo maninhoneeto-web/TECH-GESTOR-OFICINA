@@ -21,7 +21,8 @@ import {
   Lock,
   Unlock,
   AlertTriangle,
-  Play
+  Play,
+  ClipboardCheck
 } from 'lucide-react';
 import { AssinaturaSaaS } from '../types';
 
@@ -47,6 +48,7 @@ export default function Sidebar({
   const menuItems = [
     { id: 'dashboard', label: 'Painel Geral', icon: LayoutDashboard },
     { id: 'clientes', label: 'Clientes e Veículos', icon: Users },
+    { id: 'checkin', label: 'Check-in & Out', icon: ClipboardCheck },
     { id: 'estoque', label: 'Estoque / Barcode', icon: Package },
     { id: 'servicos', label: 'Serviços Auto', icon: Wrench },
     { id: 'orcamentos', label: 'Orçamentos', icon: FileText },
@@ -54,7 +56,7 @@ export default function Sidebar({
     { id: 'planos', label: 'SaaS Reseller Hub', icon: Award },
   ];
 
-  const logoUrl = "/src/assets/images/tech_gestor_logo_1780835046932.png";
+  const logoUrl = "/src/assets/images/tech_gestor_logo_1780837017980.png";
 
   return (
     <>
@@ -80,7 +82,7 @@ export default function Sidebar({
             />
           </div>
           <div>
-            <h1 className="font-extrabold text-blue-900 text-md tracking-tight">Tech Gestor</h1>
+            <h1 className="font-extrabold text-blue-900 text-md tracking-tight">Tech Gestor Oficina</h1>
             <p className="text-xs text-blue-600 font-mono">Plataforma SaaS</p>
           </div>
         </div>
@@ -135,7 +137,8 @@ export default function Sidebar({
             </div>
             <div>
               <h1 className="font-black text-slate-900 text-base leading-tight tracking-tight uppercase">
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Tech Gestor</span>
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent block">Tech Gestor</span>
+                <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent block">Oficina</span>
                 <span className="block text-[10px] font-mono text-slate-400 tracking-wider font-normal">SISTEMA AUTOMOTIVO</span>
               </h1>
             </div>

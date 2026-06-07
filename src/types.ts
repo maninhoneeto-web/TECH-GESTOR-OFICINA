@@ -82,6 +82,24 @@ export interface PlanoSaaS {
   desc: string;
 }
 
+export interface CheckInItem {
+  id: string;
+  clienteId: string;
+  tipo: 'entrada' | 'saida';
+  data: string;
+  hora: string;
+  km: number;
+  nivelCombustivel: 'Reserva' | '1/4' | '1/2' | '3/4' | 'Cheio';
+  checklist: {
+    arranhaMassa: boolean;
+    faroisLanternas: boolean;
+    estepeMacaco: boolean;
+    objetosInternos: boolean;
+  };
+  observacoes: string;
+  operador: string;
+}
+
 export interface AssinaturaSaaS {
   planoAtivoId: string;
   status: 'trial' | 'active' | 'expired' | 'bloqueado';

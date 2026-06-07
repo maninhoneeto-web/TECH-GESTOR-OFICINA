@@ -128,7 +128,7 @@ export default function ClientsTab({
         <div>
           <h2 className="text-2xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
             <span className="w-1.5 h-6 bg-cyan-400 rounded-full inline-block"></span>
-            Clientes & Veículos
+            Clientes e Veículos
           </h2>
           <p className="text-slate-400 text-sm">
             Cadastre proprietários e seus respectivos automóveis para gerar orçamentos instantâneos.

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Cliente, Peca, Servico, Orcamento, Transacao, PlanoSaaS, AssinaturaSaaS } from './types';
+import { Cliente, Peca, Servico, Orcamento, Transacao, PlanoSaaS, AssinaturaSaaS, CheckInItem } from './types';
 
 export const CLIENTES_PADRAO: Cliente[] = [
   {
@@ -312,3 +312,40 @@ export const ASSINATURA_PADRAO: AssinaturaSaaS = {
   dataVencimento: '2026-06-22',
   nomeOficina: 'Oficina Ultra Car Motors Sp'
 };
+
+export const CHECKINS_PADRAO: CheckInItem[] = [
+  {
+    id: 'ck_1',
+    clienteId: 'c1',
+    tipo: 'entrada',
+    data: '2026-06-05',
+    hora: '09:30',
+    km: 48500,
+    nivelCombustivel: '1/2',
+    checklist: {
+      arranhaMassa: true, // risco encontrado na lateral esquerda
+      faroisLanternas: true, // lanternas OK
+      estepeMacaco: true, // estepe presente
+      objetosInternos: false // pertences do cliente recolhidos na entrada
+    },
+    observacoes: 'Leve risco na porta traseira do motorista. Lanternas traseiras e dianteiras em perfeitas condições operacionais. Chave de roda e ferramentas prontas na mala.',
+    operador: 'Maurício Neto (Mecânico Chefe)'
+  },
+  {
+    id: 'ck_2',
+    clienteId: 'c2',
+    tipo: 'entrada',
+    data: '2026-06-06',
+    hora: '14:15',
+    km: 32120,
+    nivelCombustivel: '3/4',
+    checklist: {
+      arranhaMassa: false,
+      faroisLanternas: true,
+      estepeMacaco: true,
+      objetosInternos: true
+    },
+    observacoes: 'Pintura impecável, sem avarias. Som de fábrica cadastrado e presente. Entrega limpa solicitada pelo cliente Mariana Santos.',
+    operador: 'Maurício Neto (Mecânico Chefe)'
+  }
+];

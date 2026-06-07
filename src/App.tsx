@@ -10,7 +10,8 @@ import {
   Servico, 
   Orcamento, 
   Transacao, 
-  AssinaturaSaaS 
+  AssinaturaSaaS,
+  CheckInItem
 } from './types';
 import { 
   CLIENTES_PADRAO, 
@@ -18,7 +19,8 @@ import {
   SERVICOS_PADRAO, 
   ORCAMENTOS_PADRAO, 
   TRANSCOES_PADRAO, 
-  ASSINATURA_PADRAO 
+  ASSINATURA_PADRAO,
+  CHECKINS_PADRAO
 } from './data';
 
 // Importando os Componentes de Tabs
@@ -30,6 +32,7 @@ import ServicesTab from './components/ServicesTab';
 import BudgetsTab from './components/BudgetsTab';
 import FinancialTab from './components/FinancialTab';
 import PlansTab from './components/PlansTab';
+import CheckInTab from './components/CheckInTab';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -40,6 +43,7 @@ export default function App() {
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
+  const [checkins, setCheckins] = useState<CheckInItem[]>([]);
   const [assinatura, setAssinatura] = useState<AssinaturaSaaS>(ASSINATURA_PADRAO);
 
   // Inicialização e Carregamento do localStorage
@@ -50,6 +54,7 @@ export default function App() {
     const loadedOrcamentos = localStorage.getItem('tg_orcamentos');
     const loadedTransacoes = localStorage.getItem('tg_transacoes');
     const loadedAssinatura = localStorage.getItem('tg_assinatura');
+    const loadedCheckins = localStorage.getItem('tg_checkins');
 
     if (loadedClients) setClientes(JSON.parse(loadedClients));
     else {
@@ -86,6 +91,13 @@ export default function App() {
       setAssinatura(ASSINATURA_PADRAO);
       localStorage.setItem('tg_assinatura', JSON.stringify(ASSINATURA_PADRAO));
     }
+
+    if (loadedCheckins) {
+      setCheckins(JSON.parse(loadedCheckins));
+    } else {
+      setCheckins(CHECKINS_PADRAO);
+      localStorage.setItem('tg_checkins', JSON.stringify(CHECKINS_PADRAO));
+    }
   }, []);
 
   // Sync states com local storage de forma segura em grupo
@@ -108,6 +120,10 @@ export default function App() {
   useEffect(() => {
     if (transacoes.length > 0) localStorage.setItem('tg_transacoes', JSON.stringify(transacoes));
   }, [transacoes]);
+
+  useEffect(() => {
+    if (checkins.length > 0) localStorage.setItem('tg_checkins', JSON.stringify(checkins));
+  }, [checkins]);
 
   useEffect(() => {
     localStorage.setItem('tg_assinatura', JSON.stringify(assinatura));
@@ -236,6 +252,20 @@ export default function App() {
 
   const handleDeleteTransacao = (id: string) => {
     setTransacoes(prev => prev.filter(t => t.id !== id));
+  };
+
+
+  // ---- Operações de Vistoria (Check-in / Check-out) ----
+  const handleAddCheckin = (novo: Omit<CheckInItem, 'id'>) => {
+    const checkinPayload: CheckInItem = {
+      ...novo,
+      id: 'ck_' + Math.random().toString(36).substring(2, 9)
+    };
+    setCheckins(prev => [checkinPayload, ...prev]);
+  };
+
+  const handleDeleteCheckin = (id: string) => {
+    setCheckins(prev => prev.filter(c => c.id !== id));
   };
 
 
@@ -374,6 +404,16 @@ export default function App() {
             onAddOrcamento={handleAddOrcamento}
             onUpdateStatusOrcamento={handleUpdateStatusOrcamento}
             onDeleteOrcamento={handleDeleteOrcamento}
+          />
+        );
+      case 'checkin':
+        return (
+          <CheckInTab
+            checkins={checkins}
+            clientes={clientes}
+            onAddCheckin={handleAddCheckin}
+            onDeleteCheckin={handleDeleteCheckin}
+            nomeOficina={assinatura.nomeOficina}
           />
         );
       case 'financeiro':

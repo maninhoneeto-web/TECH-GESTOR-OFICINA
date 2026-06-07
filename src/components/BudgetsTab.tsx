@@ -21,7 +21,8 @@ import {
   BadgeAlert,
   Percent,
   TrendingUp,
-  Share2
+  Share2,
+  MessageSquare
 } from 'lucide-react';
 import { Cliente, Peca, Servico, Orcamento, ItemOrcamentoPeca, ItemOrcamentoServico } from '../types';
 
@@ -192,6 +193,33 @@ export default function BudgetsTab({
   const getServicoNome = (sId: string) => {
     const s = servicos.find(ser => ser.id === sId);
     return s ? s.descricao : 'Serviço Indisponível';
+  };
+
+  const handleSendWhatsApp = (orc: Orcamento) => {
+    const cli = clientes.find(c => c.id === orc.clienteId);
+    if (!cli) {
+      alert('Cliente não localizado.');
+      return;
+    }
+
+    const nroPecas = orc.pecas.reduce((acc, p) => acc + p.quantidade, 0);
+    const nroServicos = orc.servicos.length;
+
+    const msg = `Olá *${cli.nome}*!\n` +
+                `Aqui é da oficina. Segue o orçamento *${orc.codigo}* para seu veículo *${cli.veiculoMarca} ${cli.veiculoModelo}* (Placa: *${cli.veiculoPlaca}*):\n\n` +
+                `📋 *Resumo Técnico de Serviços & Peças*:\n` +
+                `- Peças Lançadas: ${nroPecas} item(ns) no total\n` +
+                `- Mão de Obra: ${nroServicos} serviço(s) listado(s)\n` +
+                (orc.desconto > 0 ? `- Desconto Técnico: R$ ${orc.desconto.toFixed(2)}\n` : '') +
+                `- *VALOR TOTAL DO SERVIÇO:* R$ ${orc.valorTotal.toFixed(2)}\n\n` +
+                `📌 *Diagnóstico Inicial:* ${orc.observacoes || 'Aguardando verificação completa.'}\n\n` +
+                `Se você precisar debater possíveis alterações no orçamento, ajustar alguma peça ou obter mais informações diagnósticas, por favor responda aqui. Estamos prontos para adequar o serviço ao seu planejamento!\n\n` +
+                `Podemos aprovar o início das vistorias e reparos?`;
+
+    const cleanPhone = cli.telefone.replace(/\D/g, '');
+    const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone;
+    const url = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
   };
 
   // Filtro Busca Orçamentos
@@ -623,6 +651,14 @@ export default function BudgetsTab({
 
                     {/* Botões visibilidade de Impressão */}
                     <div className="flex gap-1.5">
+                      <button
+                        onClick={() => handleSendWhatsApp(orc)}
+                        className="p-1.5 bg-slate-900 border border-slate-800 text-slate-350 hover:text-emerald-500 rounded-lg transition"
+                        title="Enviar orçamento via WhatsApp"
+                      >
+                        <MessageSquare className="w-4 h-4 text-emerald-400" />
+                      </button>
+
                       <button
                         onClick={() => setActiveReceiptOrcId(orc.id)}
                         className="p-1.5 bg-slate-900 border border-slate-800 text-slate-350 hover:text-cyan-400 rounded-lg transition"
