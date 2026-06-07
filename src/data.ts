@@ -327,7 +327,7 @@ export const CHECKINS_PADRAO: CheckInItem[] = [
       objetosInternos: false // pertences do cliente recolhidos na entrada
     },
     observacoes: 'Leve risco na porta traseira do motorista. Lanternas traseiras e dianteiras em perfeitas condições operacionais. Chave de roda e ferramentas prontas na mala.',
-    operador: 'Maurício Neto (Mecânico Chefe)'
+    operador: 'Mecânico Chefe'
   },
   {
     id: 'ck_2',
@@ -344,6 +344,6 @@ export const CHECKINS_PADRAO: CheckInItem[] = [
       objetosInternos: true
     },
     observacoes: 'Pintura impecável, sem avarias. Som de fábrica cadastrado e presente. Entrega limpa solicitada pelo cliente Mariana Santos.',
-    operador: 'Maurício Neto (Mecânico Chefe)'
+    operador: 'Mecânico Chefe'
   }
 ];

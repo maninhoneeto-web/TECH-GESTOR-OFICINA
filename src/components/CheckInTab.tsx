@@ -58,7 +58,7 @@ export default function CheckInTab({
   const [estepeMacaco, setEstepeMacaco] = useState(true);
   const [objetosInternos, setObjetosInternos] = useState(false);
   const [observacoes, setObservacoes] = useState('');
-  const [operador, setOperador] = useState('Maurício Neto (Mecânico Chefe)');
+  const [operador, setOperador] = useState('');
 
   const resetForm = () => {
     setClienteId('');
@@ -70,7 +70,7 @@ export default function CheckInTab({
     setEstepeMacaco(true);
     setObjetosInternos(false);
     setObservacoes('');
-    setOperador('Maurício Neto (Mecânico Chefe)');
+    setOperador('');
   };
 
   const handleOpenForm = () => {
@@ -201,10 +201,10 @@ export default function CheckInTab({
         <div>
           <h2 className="text-2xl font-extrabold text-blue-950 tracking-tight flex items-center gap-2">
             <span className="w-1.5 h-6 bg-blue-600 rounded-full inline-block"></span>
-            Check-in & Check-out de Veículos
+            Controle de Entrada & Saída (Vistorias)
           </h2>
           <p className="text-slate-500 text-sm">
-            Audite o estado dos carros na entrada e entrega da oficina, gerando transparência e confiança inabalável para seus clientes.
+            Inspecione e documente o estado físico dos automóveis na entrada e na entrega da oficina, evitando mal-entendidos.
           </p>
         </div>
         <button
@@ -249,7 +249,7 @@ export default function CheckInTab({
                 <div className="absolute right-4 top-4">
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase font-mono tracking-wider ${isEntrada ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-blue-50 border border-blue-200 text-blue-800'}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${isEntrada ? 'bg-emerald-500' : 'bg-blue-600'} animate-pulse`}></span>
-                    {isEntrada ? 'Check-in (Entrada)' : 'Check-out (Saída)'}
+                    {isEntrada ? 'Vistoria (Entrada)' : 'Vistoria (Saída)'}
                   </span>
                 </div>
 
@@ -356,12 +356,12 @@ export default function CheckInTab({
         </div>
       ) : (
         <div className="bg-white border-2 border-dashed border-slate-200 p-12 text-center rounded-2xl">
-          <p className="text-slate-500 text-sm">Nenhum laudo de check-in / check-out emitido com esses critérios.</p>
+          <p className="text-slate-500 text-sm">Nenhum laudo de vistoria emitido com esses critérios.</p>
           <button 
             onClick={handleOpenForm}
             className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 hover:text-white border text-white font-bold text-xs rounded-xl transition"
           >
-            Lançar Primeiro Check-in
+            Lançar Primeira Vistoria
           </button>
         </div>
       )}
@@ -377,7 +377,7 @@ export default function CheckInTab({
             <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
               <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                 <ClipboardCheck className="w-5 h-5 text-blue-600" />
-                Laudo de Vistoria (Check-in / Check-out)
+                Laudo de Vistoria (Entrada & Saída)
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)} 
@@ -422,7 +422,7 @@ export default function CheckInTab({
                         className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border cursor-pointer ${tipo === 'entrada' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200'}`}
                       >
                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        Check-in (Entrada)
+                        Vistoria (Entrada)
                       </button>
                       <button
                         type="button"
@@ -430,7 +430,7 @@ export default function CheckInTab({
                         className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border cursor-pointer ${tipo === 'saida' ? 'bg-blue-50 text-blue-800 border-blue-250' : 'bg-slate-50 text-slate-500 border-slate-200'}`}
                       >
                         <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                        Check-out (Saída)
+                        Vistoria (Saída)
                       </button>
                     </div>
                   </div>
