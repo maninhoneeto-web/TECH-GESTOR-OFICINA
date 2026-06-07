@@ -213,7 +213,7 @@ export default function CheckInTab({
           className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-md hover:shadow-blue-500/10 cursor-pointer self-start"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
-          Lançar Entrada / Saída
+          Check-in / Check-out
         </button>
       </div>
 
