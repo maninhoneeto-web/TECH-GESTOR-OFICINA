@@ -255,52 +255,40 @@ export const TRANSCOES_PADRAO: Transacao[] = [
 export const PLANOS_PADRAO: PlanoSaaS[] = [
   {
     id: 'p_starter',
-    nome: 'Plano Mensal Oficina',
-    preco: 69.00,
+    nome: 'Plano Mensal Completo',
+    preco: 69.90,
     periodo: 'mensal',
-    desc: 'Ideal para oficinas compactas e independentes que buscam controle total de clientes, estoque e finanças.',
+    desc: 'Acesso irrestrito a todas as funcionalidades essenciais da oficina (Estoque, Orçamentos, Vistorias, Financeiro e Código de Barras) em pagamentos mensais sem fidelidade.',
     recursos: [
+      'Acesso Ilimitado a Todas as Telas',
       'Clientes & Veículos Ilimitados',
-      'Controle de Estoque Inteligente',
-      'Leitor de Código de Barras básico',
-      'Gerenciador de Orçamentos ilimitados com WhatsApp',
-      'Check-in e Check-out Digital de Entrada',
-      'Financeiro Simplificado (Receitas e Despesas)'
+      'Orçamentos Modernos (Envio WhatsApp e PDF)',
+      'Controle de Estoque & Peças Avançado',
+      'Check-in & Check-out de Veículos (Vistorias)',
+      'Leitor de Código de Barras Integrado',
+      'Painel de Controle Financeiro Completo',
+      'Suporte Técnico Dedicado'
     ],
     recomendado: false
   },
   {
     id: 'p_pro',
-    nome: 'Plano Anual Oficina',
-    preco: 599.00,
+    nome: 'Plano Anual Completo',
+    preco: 599.90,
     periodo: 'anual',
-    desc: 'O melhor custo-benefício para oficinas modernas. Garanta acesso ininterrupto o ano inteiro por menos de R$ 50/mês!',
+    desc: 'Melhor escolha para oficinas consolidadas. Tenha acesso a todas as ferramentas com um super desconto anual de quase 30%!',
     recursos: [
-      'Tudo do Plano Mensal com desconto de R$ 229,00',
-      'Estoque Inteligente (Gavetas/Prateleiras)',
-      'Motor Barcode Instantâneo Integrado',
-      'Relatório de Margem de Lucro Avançado & Gráficos',
-      'Criação de Orçamentos em PDF com um clique para WhatsApp',
-      'Suporte Prioritário Via WhatsApp',
-      'Permissão para funcionários/usuários simultâneos'
+      'Economia de R$ 238,90 por ano (equivalente a R$ 49,99/mês)',
+      'Acesso Ilimitado a Todas as Telas',
+      'Clientes & Veículos Ilimitados',
+      'Orçamentos Modernos (Envio WhatsApp e PDF)',
+      'Controle de Estoque & Peças Avançado',
+      'Check-in & Check-out de Veículos (Vistorias)',
+      'Leitor de Código de Barras Integrado',
+      'Painel de Controle Financeiro Completo',
+      'Suporte Técnico Dedicado'
     ],
     recomendado: true
-  },
-  {
-    id: 'p_enterprise',
-    nome: 'Cyber Workshop Enterprise',
-    preco: 99.00,
-    periodo: 'mensal',
-    desc: 'Máxima potência, automatização administrativa avançada e suporte prioritário dedicado.',
-    recursos: [
-      'Tudo do plano Anual em cobrança mensal premium',
-      'Previsibilidade de faturamento com Inteligência Artificial',
-      'Controle de Fluxo de Caixa Avançado Integrado',
-      'Níveis de acesso personalizáveis para múltiplos mecânicos',
-      'Painéis executivos para donos e franqueados',
-      'Suporte Premium Dedicado 24/7 com gerente de conta'
-    ],
-    recomendado: false
   }
 ];
 

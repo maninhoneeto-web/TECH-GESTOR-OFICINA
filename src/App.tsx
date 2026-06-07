@@ -38,6 +38,25 @@ import VehiclesTab from './components/VehiclesTab';
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
+  // Seletor de Modo: 'reseller' (Dono da Marca / Revendedor) ou 'oficina' (Cliente Final que comprou a licença)
+  const [viewRole, setViewRole] = useState<'reseller' | 'oficina'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const roleParam = params.get('role');
+    if (roleParam === 'oficina' || roleParam === 'reseller') {
+      return roleParam;
+    }
+    return (localStorage.getItem('tg_view_role') as 'reseller' | 'oficina') || 'reseller';
+  });
+
+  const [hideRoleSwitcher, setHideRoleSwitcher] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('hide_switcher') === 'true' || params.get('role') === 'oficina';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('tg_view_role', viewRole);
+  }, [viewRole]);
+
   // Estados principais persistidos no localStorage
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [pecas, setPecas] = useState<Peca[]>([]);
@@ -459,6 +478,7 @@ export default function App() {
         adminUnlocked={adminUnlocked}
         onToggleAdmin={handleToggleAdmin}
         onSetStatus={handleSetStatusSaaS}
+        viewRole={viewRole}
       />
 
       {/* Conteúdo Principal de Trabalho */}
@@ -466,21 +486,65 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col gap-6">
           
           {/* Header Superior sutil para Branding do SaaS */}
-          <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-bold">Tech Gestor</span>
-              <span className="text-xs text-slate-300">/</span>
-              <span className="text-xs text-blue-600 font-black uppercase font-mono tracking-wider">{activeTab}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-4 gap-4">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-bold">Tech Gestor</span>
+                <span className="text-xs text-slate-300">/</span>
+                <span className="text-xs text-blue-600 font-black uppercase font-mono tracking-wider">{activeTab}</span>
+              </div>
+
+              {/* Seletor Rápido de Experiência (Demonstrador de Vendas do SaaS) */}
+              {!hideRoleSwitcher && (
+                <div className="bg-slate-100 border border-slate-200/80 p-1 rounded-xl flex items-center gap-1 self-start md:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setViewRole('reseller')}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition cursor-pointer flex items-center gap-1.5 ${
+                      viewRole === 'reseller'
+                        ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                    title="Visão administrativa de revenda para demonstrar faturamento, bloqueios e planos"
+                  >
+                    <span className="text-xs">💼</span> Modo: Revendedor SaaS
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewRole('oficina');
+                      if (activeTab === 'planos') {
+                        setActiveTab('dashboard');
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition cursor-pointer flex items-center gap-1.5 ${
+                      viewRole === 'oficina'
+                        ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/20'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                    title="Visão limpa que o dono da oficina vê ao contratar seu sistema"
+                  >
+                    <span className="text-xs">⚙️</span> Visão do Meu Cliente
+                  </button>
+                </div>
+              )}
             </div>
             
             <div className="flex items-center gap-3">
               {/* Usuário de demonstração */}
-              <div className="text-right hidden sm:block">
-                <p className="text-xs font-black text-slate-800 leading-none">maninhoneeto@gmail.com</p>
-                <span className="text-[9px] font-mono font-bold text-emerald-700 tracking-wider">LICENÇA HOMOLOGADA</span>
-              </div>
+              {viewRole === 'reseller' ? (
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-black text-slate-800 leading-none">maninhoneeto@gmail.com</p>
+                  <span className="text-[9px] font-mono font-bold text-emerald-700 tracking-wider">LICENÇA HOMOLOGADA</span>
+                </div>
+              ) : (
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-black text-slate-800 leading-none">{assinatura.nomeOficina || 'Nova Oficina'}</p>
+                  <span className="text-[9px] font-mono font-bold text-slate-500 tracking-wider">ESTAÇÃO DE TRABALHO</span>
+                </div>
+              )}
               <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-250 text-blue-800 font-black text-xs flex items-center justify-center uppercase">
-                MN
+                {viewRole === 'reseller' ? 'MN' : (assinatura.nomeOficina ? assinatura.nomeOficina.substring(0, 2).toUpperCase() : 'OF')}
               </div>
             </div>
           </div>

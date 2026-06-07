@@ -34,6 +34,7 @@ interface SidebarProps {
   adminUnlocked: boolean;
   onToggleAdmin: () => void;
   onSetStatus: (status: AssinaturaSaaS['status']) => void;
+  viewRole: 'reseller' | 'oficina';
 }
 
 export default function Sidebar({ 
@@ -42,11 +43,12 @@ export default function Sidebar({
   assinatura,
   adminUnlocked,
   onToggleAdmin,
-  onSetStatus
+  onSetStatus,
+  viewRole
 }: SidebarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const menuItems = [
+  const rawMenuItems = [
     { id: 'dashboard', label: 'Painel Geral', icon: LayoutDashboard },
     { id: 'clientes', label: 'Clientes', icon: Users },
     { id: 'veiculos', label: 'Veículos', icon: Car },
@@ -57,6 +59,10 @@ export default function Sidebar({
     { id: 'financeiro', label: adminUnlocked ? 'Financeiro 🔓' : 'Financeiro 🔒', icon: DollarSign },
     { id: 'planos', label: 'SaaS Reseller Hub', icon: Award },
   ];
+
+  const menuItems = viewRole === 'oficina' 
+    ? rawMenuItems.filter(item => item.id !== 'planos')
+    : rawMenuItems;
 
   const logoUrl = "/src/assets/images/tech_gestor_logo_1780837017980.png";
 
@@ -233,38 +239,40 @@ export default function Sidebar({
         <div className="flex flex-col gap-3 pt-3 border-t border-slate-200 mt-2">
           
           {/* Painel do Desenvolvedor (Controle de Bloqueio Rápido do SaaS) */}
-          <div className="p-3 bg-blue-900 text-white rounded-xl border border-blue-950 flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <h4 className="text-[10px] font-black uppercase tracking-wider font-mono text-blue-300 flex items-center gap-1">
-                <Settings className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                SIMULADOR DE MONETIZAÇÃO
-              </h4>
+          {viewRole === 'reseller' && (
+            <div className="p-3 bg-blue-900 text-white rounded-xl border border-blue-950 flex flex-col gap-1.5 animate-fade-in shadow-inner">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[10px] font-black uppercase tracking-wider font-mono text-blue-300 flex items-center gap-1">
+                  <Settings className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  SIMULADOR DE MONETIZAÇÃO
+                </h4>
+              </div>
+              <p className="text-[10px] text-blue-100 leading-normal">
+                Simule o que acontece se o cliente atrasar a fatura mensal. Bloqueie ou libere o app:
+              </p>
+              
+              <div className="grid grid-cols-2 gap-1.5 mt-1 font-mono text-[9px] font-bold">
+                <button
+                  onClick={() => {
+                    onSetStatus('bloqueado');
+                    alert('🔒 O sistema foi simulado como BLOQUEADO por falta de pagamento. Acesse o sistema para ver a tela de aviso que o cliente veria.');
+                  }}
+                  className={`py-1 rounded text-center transition cursor-pointer ${assinatura.status === 'bloqueado' ? 'bg-rose-600 text-white border border-rose-500' : 'bg-slate-900 border border-slate-800 text-rose-450 hover:bg-slate-800'}`}
+                >
+                  🔴 BLOQUEAR
+                </button>
+                <button
+                  onClick={() => {
+                    onSetStatus('active');
+                    alert('🟢 O sistema foi simulado como LIBERADO e ativo! Licença paga restabelecida.');
+                  }}
+                  className={`py-1 rounded text-center transition cursor-pointer ${assinatura.status === 'active' ? 'bg-emerald-600 text-white border border-emerald-500' : 'bg-slate-900 border border-slate-800 text-emerald-400 hover:bg-slate-800'}`}
+                >
+                  🟢 ATIVAR APP
+                </button>
+              </div>
             </div>
-            <p className="text-[10px] text-blue-100 leading-normal">
-              Simule o que acontece se o cliente atrasar a fatura mensal. Bloqueie ou libere o app:
-            </p>
-            
-            <div className="grid grid-cols-2 gap-1.5 mt-1 font-mono text-[9px] font-bold">
-              <button
-                onClick={() => {
-                  onSetStatus('bloqueado');
-                  alert('🔒 O sistema foi simulado como BLOQUEADO por falta de pagamento. Acesse o sistema para ver a tela de aviso que o cliente veria.');
-                }}
-                className={`py-1 rounded text-center transition cursor-pointer ${assinatura.status === 'bloqueado' ? 'bg-rose-600 text-white border border-rose-500' : 'bg-slate-900 border border-slate-800 text-rose-450 hover:bg-slate-800'}`}
-              >
-                🔴 BLOQUEAR
-              </button>
-              <button
-                onClick={() => {
-                  onSetStatus('active');
-                  alert('🟢 O sistema foi simulado como LIBERADO e ativo! Licença paga restabelecida.');
-                }}
-                className={`py-1 rounded text-center transition cursor-pointer ${assinatura.status === 'active' ? 'bg-emerald-600 text-white border border-emerald-500' : 'bg-slate-900 border border-slate-800 text-emerald-400 hover:bg-slate-800'}`}
-              >
-                🟢 ATIVAR APP
-              </button>
-            </div>
-          </div>
+          )}
 
           <div className="text-center text-[10px] text-slate-400 font-mono">
             &copy; 2026 Tech Gestor Oficina v1.1

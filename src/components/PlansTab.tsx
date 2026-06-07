@@ -205,9 +205,8 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
                 }}
                 className="w-full bg-slate-50 text-slate-800 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-600 focus:bg-white font-bold transition"
               >
-                <option value="p_starter">Plano Mensal Oficina (R$ 69/mês)</option>
-                <option value="p_pro">Plano Anual Oficina (R$ 599/ano)</option>
-                <option value="p_enterprise">Cyber Workshop Enterprise (R$ 99/mês)</option>
+                <option value="p_starter">Plano Mensal Completo (R$ 69,90/mês)</option>
+                <option value="p_pro">Plano Anual Completo (R$ 599,90/ano)</option>
               </select>
               <span className="text-[10px] text-slate-400">Modula limites e preços contratados.</span>
             </div>
@@ -266,7 +265,7 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
               </div>
               <h4 className="text-xs font-bold text-slate-800">Preços Recorrentes</h4>
               <p className="text-[11px] text-slate-500 leading-normal">
-                Cobre **R$ 69,00 mensais** ou ofereça o plano anual por **R$ 599,00/ano** para as oficinas. Com apenas 20 oficinas clientes ativas, você garante um faturamento recorrente incrível e escalável.
+                Cobre **R$ 69,90 mensais** ou ofereça o plano anual por **R$ 599,90/ano** para as oficinas. Com apenas 20 oficinas clientes ativas, você garante um faturamento recorrente incrível e escalável.
               </p>
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/60 flex flex-col gap-2">
@@ -292,7 +291,7 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
       </div>
 
       {/* EXIBIÇÃO DE PLANOS SAAS EM TABELAS MODERNAS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="plans-grid">
+      <div className="grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto w-full gap-6" id="plans-grid">
         {PLANOS_PADRAO.map((plano) => {
           const isAtivo = assinatura.planoAtivoId === plano.id;
           return (
