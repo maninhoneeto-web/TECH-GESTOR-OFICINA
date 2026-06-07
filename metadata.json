@@ -1,0 +1,6 @@
+{
+  "name": "Tech Gestor Oficina",
+  "description": "SaaS completo de gestão de oficinas mecânicas com controle de estoque via código de barras, financeiro, gerador de orçamentos e inteligência de lucros.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
