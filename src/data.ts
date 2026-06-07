@@ -255,49 +255,47 @@ export const TRANSCOES_PADRAO: Transacao[] = [
 export const PLANOS_PADRAO: PlanoSaaS[] = [
   {
     id: 'p_starter',
-    nome: 'Tech Starter Tracker',
-    preco: 99.90,
+    nome: 'Plano Mensal Oficina',
+    preco: 69.00,
     periodo: 'mensal',
-    desc: 'Ideal para oficinas compactas iniciando a digitalização.',
+    desc: 'Ideal para oficinas compactas e independentes que buscam controle total de clientes, estoque e finanças.',
     recursos: [
-      'Até 150 Clientes cadastrados',
-      'Controle de Estoque Essencial',
+      'Clientes & Veículos Ilimitados',
+      'Controle de Estoque Inteligente',
       'Leitor de Código de Barras básico',
-      'Gerenciador de Orçamentos ilimitados',
-      'Financeiro Simplificado (Receitas e Despesas)',
-      'Suporte via ticket comercial em até 24h'
+      'Gerenciador de Orçamentos ilimitados com WhatsApp',
+      'Check-in e Check-out Digital de Entrada',
+      'Financeiro Simplificado (Receitas e Despesas)'
     ],
     recomendado: false
   },
   {
     id: 'p_pro',
-    nome: 'Oficina Cyber Pro',
-    preco: 189.90,
-    periodo: 'mensal',
-    desc: 'O plano campeão. Perfeito para oficinas modernas em expansão rápida.',
+    nome: 'Plano Anual Oficina',
+    preco: 599.00,
+    periodo: 'anual',
+    desc: 'O melhor custo-benefício para oficinas modernas. Garanta acesso ininterrupto o ano inteiro por menos de R$ 50/mês!',
     recursos: [
-      'Clientes & Veículos Ilimitados',
-      'Estoque Inteligente com controle de gavetas/prateleiras',
-      'Motor Barcode Instantâneo (Pistola de qualquer marca integrada)',
+      'Tudo do Plano Mensal com desconto de R$ 229,00',
+      'Estoque Inteligente (Gavetas/Prateleiras)',
+      'Motor Barcode Instantâneo Integrado',
       'Relatório de Margem de Lucro Avançado & Gráficos',
       'Criação de Orçamentos em PDF com um clique para WhatsApp',
-      'Envio automático de alertas de vencimento de orçamento',
-      'Suporte Prioritário Via WhatsApp (8h às 18h)',
-      'Permissão para até 3 funcionários/usuários simultâneos'
+      'Suporte Prioritário Via WhatsApp',
+      'Permissão para funcionários/usuários simultâneos'
     ],
     recomendado: true
   },
   {
     id: 'p_enterprise',
-    nome: 'Cyber Workshop Enterprise AI',
-    preco: 349.90,
+    nome: 'Cyber Workshop Enterprise',
+    preco: 99.00,
     periodo: 'mensal',
-    desc: 'Máxima potência, automatização total e controle multi-unidades.',
+    desc: 'Máxima potência, automatização administrativa avançada e suporte prioritário dedicado.',
     recursos: [
-      'Tudo do plano Cyber Pro sem restrições',
-      'Checklist Digital de Entrada do veículo via tablet/celular',
-      'Previsibilidade de faturamento por Inteligência Artificial',
-      'Controle de Fluxo de Caixa Avançado Integrado ao Conciliador',
+      'Tudo do plano Anual em cobrança mensal premium',
+      'Previsibilidade de faturamento com Inteligência Artificial',
+      'Controle de Fluxo de Caixa Avançado Integrado',
       'Níveis de acesso personalizáveis para múltiplos mecânicos',
       'Painéis executivos para donos e franqueados',
       'Suporte Premium Dedicado 24/7 com gerente de conta'

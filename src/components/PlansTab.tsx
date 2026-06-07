@@ -180,7 +180,7 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
                     ? 'bg-rose-50 border-rose-200 text-rose-700' 
                     : resellerStatus === 'trial' 
                     ? 'bg-amber-50 border-amber-200 text-amber-700' 
-                    : 'bg-emerald-50 border-emerald-250 text-emerald-800'
+                    : 'bg-emerald-50 border-emerald-500 text-emerald-800'
                 }`}
               >
                 <option value="active">🟢 Licença Ativa (Acesso Total)</option>
@@ -205,9 +205,9 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
                 }}
                 className="w-full bg-slate-50 text-slate-800 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-600 focus:bg-white font-bold transition"
               >
-                <option value="p_lite">Plano Lite (R$ 99/mês)</option>
-                <option value="p_pro">Plano Pro (R$ 189/mês)</option>
-                <option value="p_gold">Plano Master (R$ 349/mês)</option>
+                <option value="p_starter">Plano Mensal Oficina (R$ 69/mês)</option>
+                <option value="p_pro">Plano Anual Oficina (R$ 599/ano)</option>
+                <option value="p_enterprise">Cyber Workshop Enterprise (R$ 99/mês)</option>
               </select>
               <span className="text-[10px] text-slate-400">Modula limites e preços contratados.</span>
             </div>
@@ -266,7 +266,7 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
               </div>
               <h4 className="text-xs font-bold text-slate-800">Preços Recorrentes</h4>
               <p className="text-[11px] text-slate-500 leading-normal">
-                Cobre entre **R$ 99 e R$ 350 mensais** de oficinas. Com apenas 15 oficinas clientes na sua cidade, você garante até **R$ 4.500,00 mensais** em recorrência pura de SaaS.
+                Cobre **R$ 69,00 mensais** ou ofereça o plano anual por **R$ 599,00/ano** para as oficinas. Com apenas 20 oficinas clientes ativas, você garante um faturamento recorrente incrível e escalável.
               </p>
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/60 flex flex-col gap-2">
@@ -320,12 +320,16 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
 
                 {/* Preço */}
                 <div className="py-1">
-                  <span className="text-[10px] text-slate-400 font-bold block uppercase font-mono tracking-wider">Assinatura Mensal Recorrente</span>
+                  <span className="text-[10px] text-slate-400 font-bold block uppercase font-mono tracking-wider">
+                    {plano.periodo === 'mensal' ? 'Assinatura Mensal Recorrente' : 'Assinatura Anual Recorrente'}
+                  </span>
                   <div className="flex items-baseline mt-1 gap-1">
                     <span className="text-xs font-bold text-slate-500">R$</span>
                     <span className="text-4xl font-extrabold text-slate-900 font-mono tracking-tight">{plano.preco.toFixed(2).split('.')[0]}</span>
                     <span className="text-sm font-bold text-slate-500">, {plano.preco.toFixed(2).split('.')[1]}</span>
-                    <span className="text-xs text-slate-400 font-mono font-bold">/mês</span>
+                    <span className="text-xs text-slate-400 font-mono font-bold">
+                      /{plano.periodo === 'mensal' ? 'mês' : 'ano'}
+                    </span>
                   </div>
                 </div>
 
@@ -384,7 +388,9 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
                   <span className="text-[10px] text-blue-600 font-bold block uppercase tracking-wider font-mono">Plano de Aquisição</span>
                   <span className="text-sm font-bold text-slate-800">{selectedPlano.nome}</span>
                 </div>
-                <span className="text-sm font-black text-blue-700 font-mono">R$ {selectedPlano.preco.toFixed(2)}/mês</span>
+                <span className="text-sm font-black text-blue-700 font-mono">
+                  R$ {selectedPlano.preco.toFixed(2)}/{selectedPlano.periodo === 'mensal' ? 'mês' : 'ano'}
+                </span>
               </div>
 
               {/* Nome da Oficina Compradora */}

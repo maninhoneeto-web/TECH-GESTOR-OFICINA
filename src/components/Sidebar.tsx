@@ -22,7 +22,8 @@ import {
   Unlock,
   AlertTriangle,
   Play,
-  ClipboardCheck
+  ClipboardCheck,
+  Car
 } from 'lucide-react';
 import { AssinaturaSaaS } from '../types';
 
@@ -47,7 +48,8 @@ export default function Sidebar({
 
   const menuItems = [
     { id: 'dashboard', label: 'Painel Geral', icon: LayoutDashboard },
-    { id: 'clientes', label: 'Clientes e Veículos', icon: Users },
+    { id: 'clientes', label: 'Clientes', icon: Users },
+    { id: 'veiculos', label: 'Veículos', icon: Car },
     { id: 'checkin', label: 'Check-in & Out', icon: ClipboardCheck },
     { id: 'estoque', label: 'Estoque / Barcode', icon: Package },
     { id: 'servicos', label: 'Serviços Auto', icon: Wrench },

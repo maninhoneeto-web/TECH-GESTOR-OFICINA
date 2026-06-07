@@ -33,6 +33,7 @@ import BudgetsTab from './components/BudgetsTab';
 import FinancialTab from './components/FinancialTab';
 import PlansTab from './components/PlansTab';
 import CheckInTab from './components/CheckInTab';
+import VehiclesTab from './components/VehiclesTab';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -374,6 +375,15 @@ export default function App() {
             onAddCliente={handleAddCliente}
             onEditCliente={handleEditCliente}
             onDeleteCliente={handleDeleteCliente}
+          />
+        );
+      case 'veiculos':
+        return (
+          <VehiclesTab
+            clientes={clientes}
+            checkins={checkins}
+            orcamentos={orcamentos}
+            onNavigateToTab={setActiveTab}
           />
         );
       case 'estoque':

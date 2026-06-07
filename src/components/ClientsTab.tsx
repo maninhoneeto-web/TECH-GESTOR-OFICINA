@@ -17,7 +17,8 @@ import {
   Check, 
   CreditCard,
   Hash,
-  Calendar
+  Calendar,
+  MessageSquare
 } from 'lucide-react';
 import { Cliente } from '../types';
 
@@ -128,10 +129,10 @@ export default function ClientsTab({
         <div>
           <h2 className="text-2xl font-extrabold text-slate-100 tracking-tight flex items-center gap-2">
             <span className="w-1.5 h-6 bg-cyan-400 rounded-full inline-block"></span>
-            Clientes e Veículos
+            Clientes Cadastrados
           </h2>
           <p className="text-slate-400 text-sm">
-            Cadastre proprietários e seus respectivos automóveis para gerar orçamentos instantâneos.
+            Gerencie a base de clientes proprietários e seus contatos integrados ao ecossistema da oficina.
           </p>
         </div>
         <button
@@ -226,6 +227,19 @@ export default function ClientsTab({
 
               {/* Ações Rápidas */}
               <div className="mt-5 pt-3 border-t border-slate-900 flex justify-end gap-2.5">
+                <button
+                  onClick={() => {
+                    const cleanPhone = c.telefone.replace(/\D/g, '');
+                    const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone;
+                    const msg = `Olá *${c.nome}*!\nTudo bem? Aqui é da equipe *Tech Gestor Oficina* 🚗💨\n\nEntramos em contato sobre o veículo *${c.veiculoMarca} ${c.veiculoModelo}* (Placa: *${c.veiculoPlaca}*).\nEstá disponível para vistoria mecânica ou orçamento no momento? Como podemos te ajudar hoje?`;
+                    const url = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(msg)}`;
+                    window.open(url, '_blank');
+                  }}
+                  className="p-2 text-emerald-450 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-lg transition"
+                  title="Enviar Mensagem direta pelo WhatsApp"
+                >
+                  <MessageSquare className="w-4.5 h-4.5 text-emerald-400" />
+                </button>
                 <button
                   onClick={() => handleOpenEdit(c)}
                   className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition"
