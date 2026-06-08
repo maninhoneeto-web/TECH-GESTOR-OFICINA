@@ -24,7 +24,11 @@ import {
   Unlock,
   AlertTriangle,
   Layers,
-  Wrench
+  Wrench,
+  User,
+  Key,
+  Copy,
+  Share2
 } from 'lucide-react';
 import { PlanoSaaS, AssinaturaSaaS } from '../types';
 import { PLANOS_PADRAO } from '../data';
@@ -32,17 +36,46 @@ import { PLANOS_PADRAO } from '../data';
 interface PlansTabProps {
   assinatura: AssinaturaSaaS;
   onChangeAssinatura: (novaAssinatura: AssinaturaSaaS) => void;
+  resellerUsername?: string;
+  resellerPassword?: string;
+  onUpdateCredentials?: (user: string, pass: string) => void;
 }
 
-export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabProps) {
+export default function PlansTab({ 
+  assinatura, 
+  onChangeAssinatura,
+  resellerUsername = 'admin',
+  resellerPassword = '123',
+  onUpdateCredentials
+}: PlansTabProps) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedPlano, setSelectedPlano] = useState<PlanoSaaS | null>(null);
+
+  // Estados para feedback táctil de links de demonstração copied
+  const [copiedClient, setCopiedClient] = useState(false);
+  const [copiedAdmin, setCopiedAdmin] = useState(false);
+
+  const handleCopyLink = (url: string, type: 'client' | 'admin') => {
+    navigator.clipboard.writeText(url);
+    if (type === 'client') {
+      setCopiedClient(true);
+      setTimeout(() => setCopiedClient(false), 2000);
+    } else {
+      setCopiedAdmin(true);
+      setTimeout(() => setCopiedAdmin(false), 2000);
+    }
+  };
 
   // Estados dos inputs de configuração do revendedor
   const [resellerOficinaName, setResellerOficinaName] = useState(assinatura.nomeOficina);
   const [resellerStatus, setResellerStatus] = useState<AssinaturaSaaS['status']>(assinatura.status);
   const [resellerPlanoId, setResellerPlanoId] = useState(assinatura.planoAtivoId);
   const [resellerVencimento, setResellerVencimento] = useState(assinatura.dataVencimento);
+
+  // Formulário para alterar login e senha do administrador
+  const [newUsername, setNewUsername] = useState(resellerUsername);
+  const [newPassword, setNewPassword] = useState(resellerPassword);
+  const [showCredsFeedback, setShowCredsFeedback] = useState(false);
 
   // Formulário de simulação de compra SaaS pelo cliente
   const [nomeOficina, setNomeOficina] = useState(assinatura.nomeOficina);
@@ -236,6 +269,167 @@ export default function PlansTab({ assinatura, onChangeAssinatura }: PlansTabPro
               <p className="text-xs text-blue-900 leading-normal">
                 <strong>Simulação Prática de Atraso Financeiro:</strong> Altere a Licença Comercial para <strong>🔴 Bloqueado Administrativamente</strong>. O aplicativo exibirá imediatamente o bloqueio com orientações para pagamento e liberação das atividades!
               </p>
+            </div>
+          </div>
+
+          {/* Seção Extra: Alterar Login e Senha Administrativa Secreta */}
+          <div className="border-t border-slate-100 pt-5 mt-4">
+            <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 mb-3">
+              <Lock className="w-3.5 h-3.5 text-blue-600" />
+              🔐 Segurança Mestra: Alterar Login e Senha do Revendedor
+            </h4>
+            <p className="text-[11px] text-slate-500 mb-4">
+              Altere o usuário e a senha padrão de proteção para garantir que apenas você possa acessar as configurações de licenciamento e faturamento do SaaS, mesmo se enviar o link de homologação aos seus clientes operacionais.
+            </p>
+
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (onUpdateCredentials) {
+                  onUpdateCredentials(newUsername, newPassword);
+                  setShowCredsFeedback(true);
+                  setTimeout(() => setShowCredsFeedback(false), 4000);
+                }
+              }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+            >
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                  <User className="w-3 h-3 text-slate-500" />
+                  Novo Usuário de Revendedor
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  className="w-full bg-slate-50 text-slate-800 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-600 focus:bg-white focus:outline-none transition font-medium"
+                  placeholder="Ex: admin"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                  <Key className="w-3 h-3 text-slate-500" />
+                  Nova Senha Secreta
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full bg-slate-50 text-slate-800 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-600 focus:bg-white focus:outline-none transition font-sans font-medium"
+                  placeholder="Ex: minhaSenhaSecreta"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-black py-2.5 px-4 rounded-xl shadow-md shadow-blue-500/10 cursor-pointer transition flex items-center justify-center gap-1.5"
+                >
+                  Salvar Novas Credenciais
+                </button>
+              </div>
+            </form>
+
+            {showCredsFeedback && (
+              <div className="mt-3 p-2.5 bg-emerald-50 text-emerald-850 text-xs font-semibold rounded-xl border border-emerald-150 flex items-center gap-2 animate-fade-in">
+                <span className="text-sm">✅</span> Credenciais salvas com sucesso! Agora utilize o usuário <strong className="font-bold underline">{newUsername}</strong> e a senha <strong className="font-bold underline">{newPassword}</strong> para fazer o login.
+              </div>
+            )}
+          </div>
+
+          {/* Sessão: Central de Geração e Distribuição de Links Comerciais */}
+          <div className="border-t border-slate-100 pt-5 mt-4 text-left">
+            <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+              <Share2 className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+              🔗 Central de Links: Como Enviar para o Seu Cliente com Segurança
+            </h4>
+            <p className="text-[11px] text-slate-500 leading-normal mb-4">
+              Cada link abaixo é gerado dinamicamente para o seu endereço atual. Use-os para demonstrar o software, homologar parceiros ou entregar o sistema final aos donos de oficinas mecânicas.
+            </p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Box 1: Link do Cliente Final */}
+              <div className="p-4 bg-slate-50/55 rounded-2xl border border-slate-150 flex flex-col justify-between gap-3">
+                <div className="flex flex-col gap-1">
+                  <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 text-[9px] font-black uppercase rounded-full self-start font-mono border border-emerald-100 shadow-sm">
+                    🔒 Link Seguro do Cliente (Oficina)
+                  </span>
+                  <p className="text-[11px] text-slate-600 leading-normal mt-1.5">
+                    <strong>Blindagem Integrada:</strong> Envie este link para o dono da oficina mecânica. Ele abre diretamente no painel de trabalho dele, <strong>OCULTANDO</strong> todos os botões de faturamento SaaS, tabela de preços e configurações do revendedor.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80 mt-1">
+                  <span className="text-[10px] text-slate-400 font-mono select-all truncate flex-1 leading-none py-1 overflow-x-auto whitespace-nowrap">
+                    {typeof window !== 'undefined' ? `${window.location.origin}/?role=oficina&hide_switcher=true` : 'https://.../?role=oficina&hide_switcher=true'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = typeof window !== 'undefined' ? `${window.location.origin}/?role=oficina&hide_switcher=true` : '';
+                      if (url) handleCopyLink(url, 'client');
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition flex items-center gap-1 cursor-pointer shrink-0 ${
+                      copiedClient 
+                        ? 'bg-emerald-600 text-white shadow-sm' 
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {copiedClient ? (
+                      <>
+                        <Check className="w-3 h-3" /> Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" /> Copiar Link
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Box 2: Link Administrativo do Revendedor */}
+              <div className="p-4 bg-slate-50/55 rounded-2xl border border-slate-150 flex flex-col justify-between gap-3">
+                <div className="flex flex-col gap-1">
+                  <span className="px-2.5 py-0.5 bg-blue-50 text-blue-800 text-[9px] font-black uppercase rounded-full self-start font-mono border border-blue-100 shadow-sm">
+                    🔑 Link Administrativo (Você)
+                  </span>
+                  <p className="text-[11px] text-slate-600 leading-normal mt-1.5">
+                    Utilize este endereço em sua máquina ou aba privada para gerenciar o faturamento e renovar os contratos de licenciamento comercial das oficinas. Requer seu login e senha mestre para desbloquear as funções.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80 mt-1">
+                  <span className="text-[10px] text-slate-400 font-mono select-all truncate flex-1 leading-none py-1 overflow-x-auto whitespace-nowrap">
+                    {typeof window !== 'undefined' ? `${window.location.origin}/?role=reseller` : 'https://.../?role=reseller'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = typeof window !== 'undefined' ? `${window.location.origin}/?role=reseller` : '';
+                      if (url) handleCopyLink(url, 'admin');
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition flex items-center gap-1 cursor-pointer shrink-0 ${
+                      copiedAdmin 
+                        ? 'bg-emerald-600 text-white shadow-sm' 
+                        : 'bg-slate-700 hover:bg-slate-800 text-white'
+                    }`}
+                  >
+                    {copiedAdmin ? (
+                      <>
+                        <Check className="w-3 h-3" /> Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" /> Copiar Link
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

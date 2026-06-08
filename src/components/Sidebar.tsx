@@ -35,6 +35,9 @@ interface SidebarProps {
   onToggleAdmin: () => void;
   onSetStatus: (status: AssinaturaSaaS['status']) => void;
   viewRole: 'reseller' | 'oficina';
+  isResellerAuthenticated: boolean;
+  onTriggerResellerLogin: () => void;
+  onLogoutReseller: () => void;
 }
 
 export default function Sidebar({ 
@@ -44,7 +47,10 @@ export default function Sidebar({
   adminUnlocked,
   onToggleAdmin,
   onSetStatus,
-  viewRole
+  viewRole,
+  isResellerAuthenticated,
+  onTriggerResellerLogin,
+  onLogoutReseller
 }: SidebarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -60,7 +66,7 @@ export default function Sidebar({
     { id: 'planos', label: 'SaaS Reseller Hub', icon: Award },
   ];
 
-  const menuItems = viewRole === 'oficina' 
+  const menuItems = (viewRole === 'oficina' && !isResellerAuthenticated)
     ? rawMenuItems.filter(item => item.id !== 'planos')
     : rawMenuItems;
 
@@ -274,7 +280,44 @@ export default function Sidebar({
             </div>
           )}
 
-          <div className="text-center text-[10px] text-slate-400 font-mono">
+          {/* Sessão administrativa SaaS do Revendedor */}
+          <div className="border-t border-slate-100 pt-3 mt-1 flex flex-col gap-2">
+            {!isResellerAuthenticated ? (
+              <button
+                type="button"
+                onClick={onTriggerResellerLogin}
+                className="w-full py-2 px-3 bg-slate-50 hover:bg-blue-50 border border-slate-200/80 rounded-xl text-[11px] font-bold text-slate-500 hover:text-blue-700 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              >
+                <Lock className="w-3.5 h-3.5 text-slate-400" /> Painel de Revenda SaaS
+              </button>
+            ) : (
+              <div className="bg-blue-50/50 border border-blue-150 p-2 rounded-xl text-center flex flex-col gap-1 shadow-sm">
+                <span className="text-[9px] font-mono font-bold text-blue-700 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <Unlock className="w-3 h-3 text-blue-600" /> Sessão Admin Ativa
+                </span>
+                <div className="flex gap-2 justify-center mt-1 font-sans">
+                  <button 
+                    onClick={() => {
+                      setActiveTab('planos');
+                      setIsOpen(false);
+                    }}
+                    className="text-[9px] font-extrabold text-blue-700 hover:underline cursor-pointer"
+                  >
+                    Ir pro Painel
+                  </button>
+                  <span className="text-slate-300">|</span>
+                  <button 
+                    onClick={onLogoutReseller}
+                    className="text-[9px] font-extrabold text-rose-600 hover:underline cursor-pointer"
+                  >
+                    Sair Admin
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="text-center text-[10px] text-slate-400 font-mono mt-2">
             &copy; 2026 Tech Gestor Oficina v1.1
           </div>
         </div>

@@ -34,24 +34,75 @@ import FinancialTab from './components/FinancialTab';
 import PlansTab from './components/PlansTab';
 import CheckInTab from './components/CheckInTab';
 import VehiclesTab from './components/VehiclesTab';
+import { Lock, ShieldAlert, Key, User, Eye, EyeOff, ShieldCheck, Unlock, X } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  // Credenciais mestras do Administrador/Owner (salvas no localStorage para personalização via UI)
+  const [resellerUsername, setResellerUsername] = useState<string>(() => {
+    return localStorage.getItem('tg_reseller_username') || 'admin';
+  });
+
+  const [resellerPassword, setResellerPassword] = useState<string>(() => {
+    return localStorage.getItem('tg_reseller_password') || '123';
+  });
+
+  // Estado de autenticação da sessão (usa sessionStorage para ser válido apenas na aba atual do navegador)
+  const [isResellerAuthenticated, setIsResellerAuthenticated] = useState<boolean>(() => {
+    return sessionStorage.getItem('tg_reseller_authenticated') === 'true';
+  });
 
   // Seletor de Modo: 'reseller' (Dono da Marca / Revendedor) ou 'oficina' (Cliente Final que comprou a licença)
   const [viewRole, setViewRole] = useState<'reseller' | 'oficina'>(() => {
     const params = new URLSearchParams(window.location.search);
     const roleParam = params.get('role');
-    if (roleParam === 'oficina' || roleParam === 'reseller') {
-      return roleParam;
+    if (roleParam === 'oficina') {
+      return 'oficina';
     }
-    return (localStorage.getItem('tg_view_role') as 'reseller' | 'oficina') || 'reseller';
+    const isAuthed = sessionStorage.getItem('tg_reseller_authenticated') === 'true';
+    if (isAuthed) {
+      if (roleParam === 'reseller') return 'reseller';
+      return (localStorage.getItem('tg_view_role') as 'reseller' | 'oficina') || 'reseller';
+    }
+    // Visão limpa e segura de cliente final por padrão se não autenticado
+    return 'oficina';
   });
 
   const [hideRoleSwitcher, setHideRoleSwitcher] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('hide_switcher') === 'true' || params.get('role') === 'oficina';
   });
+
+  // Estados do formulário de login administrativo
+  const [showResellerLoginModal, setShowResellerLoginModal] = useState(false);
+  const [loginUser, setLoginUser] = useState('');
+  const [loginPass, setLoginPass] = useState('');
+  const [showLoginPass, setShowLoginPass] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginUser.trim() === resellerUsername && loginPass === resellerPassword) {
+      setIsResellerAuthenticated(true);
+      sessionStorage.setItem('tg_reseller_authenticated', 'true');
+      setViewRole('reseller');
+      setShowResellerLoginModal(false);
+      setLoginError('');
+    } else {
+      setLoginError('❌ Nome de usuário ou senha de revendedor incorretos!');
+    }
+  };
+
+  const handleLogoutReseller = () => {
+    setIsResellerAuthenticated(false);
+    sessionStorage.removeItem('tg_reseller_authenticated');
+    setViewRole('oficina');
+    if (activeTab === 'planos') {
+      setActiveTab('dashboard');
+    }
+    alert('🔒 Você saiu da sessão de Revendedor SaaS com sucesso.');
+  };
 
   useEffect(() => {
     localStorage.setItem('tg_view_role', viewRole);
@@ -456,10 +507,42 @@ export default function App() {
           />
         );
       case 'planos':
+        if (!isResellerAuthenticated) {
+          return (
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 max-w-md mx-auto my-12 shadow-sm text-center animate-fade-in">
+              <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100 shadow-inner">
+                <Lock className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">Acesso Restrito: Revendedor SaaS</h3>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                Você precisa se autenticar como o proprietário da plataforma para alterar preços, planos, nome da oficina e gerenciar o faturamento dos seus clientes.
+              </p>
+              <button
+                onClick={() => {
+                  setShowResellerLoginModal(true);
+                  setLoginUser('');
+                  setLoginPass('');
+                  setLoginError('');
+                }}
+                className="mt-6 w-full py-2.5 bg-blue-600 text-white text-xs font-black rounded-xl hover:bg-blue-700 transition cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Key className="w-3.5 h-3.5" /> Entrar com Credenciais
+              </button>
+            </div>
+          );
+        }
         return (
           <PlansTab
             assinatura={assinatura}
             onChangeAssinatura={handleChangeAssinatura}
+            resellerUsername={resellerUsername}
+            resellerPassword={resellerPassword}
+            onUpdateCredentials={(user, pass) => {
+              setResellerUsername(user);
+              setResellerPassword(pass);
+              localStorage.setItem('tg_reseller_username', user);
+              localStorage.setItem('tg_reseller_password', pass);
+            }}
           />
         );
       default:
@@ -479,6 +562,14 @@ export default function App() {
         onToggleAdmin={handleToggleAdmin}
         onSetStatus={handleSetStatusSaaS}
         viewRole={viewRole}
+        isResellerAuthenticated={isResellerAuthenticated}
+        onTriggerResellerLogin={() => {
+          setShowResellerLoginModal(true);
+          setLoginUser('');
+          setLoginPass('');
+          setLoginError('');
+        }}
+        onLogoutReseller={handleLogoutReseller}
       />
 
       {/* Conteúdo Principal de Trabalho */}
@@ -499,15 +590,24 @@ export default function App() {
                 <div className="bg-slate-100 border border-slate-200/80 p-1 rounded-xl flex items-center gap-1 self-start md:self-auto">
                   <button
                     type="button"
-                    onClick={() => setViewRole('reseller')}
+                    onClick={() => {
+                      if (isResellerAuthenticated) {
+                        setViewRole('reseller');
+                      } else {
+                        setShowResellerLoginModal(true);
+                        setLoginUser('');
+                        setLoginPass('');
+                        setLoginError('');
+                      }
+                    }}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition cursor-pointer flex items-center gap-1.5 ${
                       viewRole === 'reseller'
                         ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
                         : 'text-slate-500 hover:text-slate-800'
                     }`}
-                    title="Visão administrativa de revenda para demonstrar faturamento, bloqueios e planos"
+                    title="Visão administrativa de revenda protegida por senha"
                   >
-                    <span className="text-xs">💼</span> Modo: Revendedor SaaS
+                    <span className="text-xs">{isResellerAuthenticated ? '🔓' : '🔒'}</span> {isResellerAuthenticated ? 'Dono SaaS' : 'Ativar Modo Revenda'}
                   </button>
                   <button
                     type="button"
@@ -526,6 +626,17 @@ export default function App() {
                   >
                     <span className="text-xs">⚙️</span> Visão do Meu Cliente
                   </button>
+
+                  {isResellerAuthenticated && (
+                    <button
+                      type="button"
+                      onClick={handleLogoutReseller}
+                      className="px-2.5 py-1 text-slate-400 hover:text-rose-600 text-[10px] font-bold transition flex items-center gap-0.5 border-l border-slate-200 ml-1 cursor-pointer"
+                      title="Sair da sessão administrativa do SaaS"
+                    >
+                      Sair
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -556,6 +667,114 @@ export default function App() {
 
         </div>
       </main>
+
+      {/* MODAL DE LOGIN ADMINISTRATIVO DO REVENDEDOR SaaS */}
+      {showResellerLoginModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-150 overflow-hidden transform transition-all duration-300">
+            
+            {/* Header do Modal */}
+            <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 bg-blue-100 text-blue-700 rounded-lg">
+                  <ShieldCheck className="w-4 h-4" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-extrabold text-slate-800 uppercase tracking-wider font-mono">Autenticação Mestra</h3>
+                  <p className="text-[10px] text-slate-550">Restrito ao Proprietário da Plataforma SaaS</p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setShowResellerLoginModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Conteúdo / Form */}
+            <form onSubmit={handleLoginSubmit} className="p-6 flex flex-col gap-4">
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Insira as credenciais administrativas do dono para liberar o <strong>SaaS Reseller Hub</strong>, simulações de faturamento e controle de bloqueios de clientes.
+              </p>
+
+              {loginError && (
+                <div className="p-3 bg-rose-50 text-rose-700 text-xs font-semibold rounded-xl border border-rose-100 animate-pulse">
+                  {loginError}
+                </div>
+              )}
+
+              {/* Input Usuário */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                  <User className="w-3.5 h-3.5 text-blue-600" />
+                  Usuário Administrativo
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={loginUser}
+                  onChange={(e) => setLoginUser(e.target.value)}
+                  placeholder="Ex: admin"
+                  className="w-full bg-slate-50 text-slate-800 text-xs px-3.5 py-2.5 rounded-xl border border-slate-205 focus:border-blue-600 focus:bg-white focus:outline-none transition"
+                  autoFocus
+                />
+              </div>
+
+              {/* Input Senha */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1 justify-between">
+                  <span className="flex items-center gap-1">
+                    <Key className="w-3.5 h-3.5 text-blue-600" />
+                    Senha do Administrador
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPass(!showLoginPass)}
+                    className="text-[10px] text-blue-600 hover:underline cursor-pointer"
+                  >
+                    {showLoginPass ? 'Ocultar' : 'Mostrar'}
+                  </button>
+                </label>
+                <input
+                  type={showLoginPass ? 'text' : 'password'}
+                  required
+                  value={loginPass}
+                  onChange={(e) => setLoginPass(e.target.value)}
+                  placeholder="Sua senha secreta"
+                  className="w-full bg-slate-50 text-slate-800 text-xs px-3.5 py-2.5 rounded-xl border border-slate-205 focus:border-blue-600 focus:bg-white focus:outline-none transition font-sans"
+                />
+              </div>
+
+              <div className="text-[10px] text-slate-400 font-mono bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex flex-col gap-0.5">
+                <span>💡 Credenciais padrão configuradas para demonstração:</span>
+                <span>• Usuário: <strong className="text-slate-600 font-bold">{resellerUsername}</strong></span>
+                <span>• Senha: <strong className="text-slate-600 font-bold">{resellerPassword}</strong></span>
+                <span className="text-blue-500 mt-1 font-sans font-bold">Você poderá alterar este login e senha a qualquer momento dentro do SaaS Reseller Hub!</span>
+              </div>
+
+              {/* Rodapé de Ação */}
+              <div className="flex items-center gap-3 mt-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowResellerLoginModal(false)}
+                  className="flex-1 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition text-xs font-bold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/10 transition text-xs font-black cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Unlock className="w-3.5 h-3.5" /> Confirmar Acesso
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );
